@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: order-service
+
+# PostgreSQL Database Configurations:
+  datasource:
+    url: jdbc:postgresql://localhost:1010/order_db
+    username: user
+    password: pass
+
+# Jpa & Hibernate Configurations:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# Server Configurations:
+server:
+  port: 9020
+  servlet:
+    context-path: /api/v1
