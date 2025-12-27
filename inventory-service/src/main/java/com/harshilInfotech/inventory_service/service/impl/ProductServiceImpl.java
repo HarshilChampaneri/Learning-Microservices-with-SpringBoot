@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
 
         log.info("Fetching Product with mentioned Id form the database");
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("No Product found by Id: " + productId));
+                .orElseThrow(() -> new RuntimeException("Product with productId: " + productId + " not found"));
         log.info("Product fetched Successfully");
 
         log.info("Converting Product to ProductResponse and Returning the Product");

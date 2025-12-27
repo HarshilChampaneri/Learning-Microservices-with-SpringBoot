@@ -17,6 +17,18 @@ spring:
       hibernate:
         format_sql: true
 
+# Eureka Client Registration Configurations:
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    fetchRegistry: true
+    registerWithEureka: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
 # Server Configurations:
 server:
   port: 9020
