@@ -1,27 +1,28 @@
 package com.harshilInfotech.inventory_service.controller;
 
+import com.harshilInfotech.inventory_service.config.OrderFeignClient;
 import com.harshilInfotech.inventory_service.dto.response.ProductResponse;
 import com.harshilInfotech.inventory_service.service.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.client.ServiceInstance;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
-    private final DiscoveryClient discoveryClient;
-    private final RestClient restClient;
+    private final OrderFeignClient orderFeignClient;
 
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
@@ -34,16 +35,12 @@ public class ProductController {
     }
 
     @GetMapping("/fetch-orders")
-    public ResponseEntity<String> fetchOrdersFromOrderService() {
-        ServiceInstance orderService = discoveryClient.getInstances("order-service").getFirst();
+    public ResponseEntity<String> fetchOrdersFromOrderService(HttpServletRequest request) {
 
-        return ResponseEntity.ok(
-                restClient
-                        .get()
-                        .uri(orderService.getUri() + "/api/v1/orders/hello-orders")
-                        .retrieve()
-                        .body(String.class)
-        );
+        log.info(request.getHeader("X-Custom-Header"));
+
+        return orderFeignClient.helloOrdersController();
+
     }
 
 }
