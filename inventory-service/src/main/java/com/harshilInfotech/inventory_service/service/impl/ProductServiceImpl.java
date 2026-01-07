@@ -1,5 +1,7 @@
 package com.harshilInfotech.inventory_service.service.impl;
 
+import com.harshilInfotech.inventory_service.dto.request.OrderItemRequest;
+import com.harshilInfotech.inventory_service.dto.request.OrderRequest;
 import com.harshilInfotech.inventory_service.dto.response.ProductResponse;
 import com.harshilInfotech.inventory_service.entity.Product;
 import com.harshilInfotech.inventory_service.mapper.ProductMapper;
@@ -8,6 +10,7 @@ import com.harshilInfotech.inventory_service.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -44,6 +47,33 @@ public class ProductServiceImpl implements ProductService {
         log.info("Converting Product to ProductResponse and Returning the Product");
         return productMapper.toProductResponse(product);
 
+    }
+
+    @Override
+    @Transactional
+    public Double reduceStocks(OrderRequest orderRequest) {
+
+        log.info("Reducing Stocks");
+
+        Double totalPrice = 0.0;
+        for (OrderItemRequest orderItemRequest : orderRequest.orderItems()) {
+
+            Long productId = orderItemRequest.productId();
+            Integer quantity = orderItemRequest.quantity();
+
+            Product product = productRepository.findById(productId).orElseThrow(() ->
+                    new RuntimeException("Product not found with productId: " + productId));
+
+            if (product.getStock() < quantity) {
+                throw new RuntimeException("Product cannot be fulfilled for the given quantity.");
+            }
+            product.setStock(product.getStock() - quantity);
+            productRepository.save(product);
+            totalPrice = quantity * product.getPrice();
+
+        }
+
+        return totalPrice;
     }
 
 }

@@ -7,7 +7,6 @@ spring:
     gateway:
       mvc:
         routes:
-
           - id: order-service
             uri: lb://ORDER-SERVICE
             predicates:
@@ -15,7 +14,6 @@ spring:
 #            filters:
 #              - AddRequestHeader=X-Custom-Header, Harshil
 #              - RedirectTo=302, https://github.com/HarshilChampaneri
-
           - id: inventory-service
             uri: lb://INVENTORY-SERVICE
             predicates:
@@ -23,7 +21,6 @@ spring:
 #            filters:
 #              - AddRequestHeader=X-Custom-Header, Harshil
 #              - RedirectTo=302, https://github.com/HarshilChampaneri
-
           - id: no-service
             uri: lb://NO-SERVICE
             predicates:

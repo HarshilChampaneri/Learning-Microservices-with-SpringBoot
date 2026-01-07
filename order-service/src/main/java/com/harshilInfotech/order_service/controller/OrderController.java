@@ -1,13 +1,11 @@
 package com.harshilInfotech.order_service.controller;
 
+import com.harshilInfotech.order_service.dto.request.OrderRequest;
 import com.harshilInfotech.order_service.dto.response.OrderResponse;
 import com.harshilInfotech.order_service.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +29,11 @@ public class OrderController {
     @GetMapping("/hello-orders")
     public ResponseEntity<String> helloOrdersController() {
         return ResponseEntity.ok("Hello from Order Service Application.");
+    }
+
+    @PostMapping("/create-order")
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
+        
     }
 
 }
