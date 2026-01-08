@@ -13,4 +13,6 @@ public interface OrderService {
 
     OrderResponse createOrder(OrderRequest orderRequest);
 
+    String cancelOrder(Long orderId);
+
 }

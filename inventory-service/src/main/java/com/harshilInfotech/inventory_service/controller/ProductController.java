@@ -2,6 +2,7 @@ package com.harshilInfotech.inventory_service.controller;
 
 import com.harshilInfotech.inventory_service.config.OrderFeignClient;
 import com.harshilInfotech.inventory_service.dto.request.OrderRequest;
+import com.harshilInfotech.inventory_service.dto.response.OrderResponse;
 import com.harshilInfotech.inventory_service.dto.response.ProductResponse;
 import com.harshilInfotech.inventory_service.service.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,6 +44,11 @@ public class ProductController {
     @PutMapping("/reduce-stocks")
     public ResponseEntity<Double> reduceStocks(@RequestBody OrderRequest orderRequest) {
         return ResponseEntity.ok(productService.reduceStocks(orderRequest));
+    }
+
+    @PutMapping("/add-stocks")
+    public Void addStocks(@RequestBody OrderResponse orderResponse) {
+        return productService.addStocks(orderResponse);
     }
 
 }

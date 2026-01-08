@@ -1,9 +1,7 @@
 package com.harshilInfotech.order_service.service.impl;
 
 import com.harshilInfotech.order_service.clients.InventoryFeignClient;
-import com.harshilInfotech.order_service.dto.request.OrderItemRequest;
 import com.harshilInfotech.order_service.dto.request.OrderRequest;
-import com.harshilInfotech.order_service.dto.response.OrderItemResponse;
 import com.harshilInfotech.order_service.dto.response.OrderResponse;
 import com.harshilInfotech.order_service.entity.Order;
 import com.harshilInfotech.order_service.entity.OrderItem;
@@ -73,6 +71,29 @@ public class OrderServiceImpl implements OrderService {
         log.info("Created Order, Set Status to Order_Confirmed, Sending response.");
 
         return orderMapper.toOrderResponse(order);
+
+    }
+
+    @Override
+    @Transactional
+    public String cancelOrder(Long orderId) {
+
+        log.info("Cancelling the Order");
+
+        Order order = orderRepository.findById(orderId).orElseThrow(() ->
+                new RuntimeException("Not Order found with orderId: " + orderId));
+
+        if (order.getOrderStatus().equals(OrderStatus.CANCELLED)) {
+            throw new RuntimeException("Order cannot be cancelled again");
+        }
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        order = orderRepository.save(order);
+
+        OrderResponse orderResponse = orderMapper.toOrderResponse(order);
+
+        inventoryFeignClient.addStocks(orderResponse);
+
+        return "Your Order with orderId: " + orderId + " has been cancelled successfully and the total price: " + orderResponse.totalPrice() + " has been refunded";
 
     }
 

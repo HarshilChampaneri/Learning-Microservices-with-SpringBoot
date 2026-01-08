@@ -2,6 +2,8 @@ package com.harshilInfotech.inventory_service.service.impl;
 
 import com.harshilInfotech.inventory_service.dto.request.OrderItemRequest;
 import com.harshilInfotech.inventory_service.dto.request.OrderRequest;
+import com.harshilInfotech.inventory_service.dto.response.OrderItemResponse;
+import com.harshilInfotech.inventory_service.dto.response.OrderResponse;
 import com.harshilInfotech.inventory_service.dto.response.ProductResponse;
 import com.harshilInfotech.inventory_service.entity.Product;
 import com.harshilInfotech.inventory_service.mapper.ProductMapper;
@@ -69,13 +71,39 @@ public class ProductServiceImpl implements ProductService {
             }
             product.setStock(product.getStock() - quantity);
             productRepository.save(product);
-            totalPrice = quantity * product.getPrice();
+            totalPrice += quantity * product.getPrice();
 
         }
 
         log.info("Completed Stock Reducing Process, Continuing Payment with Total Price: {}", totalPrice);
 
         return totalPrice;
+    }
+
+    @Override
+    @Transactional
+    public Void addStocks(OrderResponse orderResponse) {
+
+        log.info("Adding Stocks, Cancelling Order");
+
+        Double totalPrice = 0.0;
+        for (OrderItemResponse orderItemResponse : orderResponse.orderItems()) {
+
+            Long productId = orderItemResponse.productId();
+            Integer quantity = orderItemResponse.quantity();
+
+            Product product = productRepository.findById(productId).orElseThrow(() ->
+                    new RuntimeException("No Product found by productId: " + productId));
+
+            product.setStock(product.getStock() + quantity);
+            productRepository.save(product);
+
+            totalPrice += product.getPrice() * quantity;
+
+        }
+
+        return null;
+
     }
 
 }
