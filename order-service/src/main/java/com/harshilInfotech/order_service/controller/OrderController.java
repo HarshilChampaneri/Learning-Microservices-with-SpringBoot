@@ -33,7 +33,7 @@ public class OrderController {
 
     @PostMapping("/create-order")
     public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
-        
+        return ResponseEntity.ok(orderService.createOrder(orderRequest));
     }
 
 }

@@ -73,6 +73,8 @@ public class ProductServiceImpl implements ProductService {
 
         }
 
+        log.info("Completed Stock Reducing Process, Continuing Payment with Total Price: {}", totalPrice);
+
         return totalPrice;
     }
 
