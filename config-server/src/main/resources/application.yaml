@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: config-server
+
+# Config Server Configuration:
+  cloud:
+    config:
+      server:
+        git:
+          uri: ${GITHUB_CONFIG_REPO}
+          username: HarshilChampaneri
+          password: ${GIT_PERSONAL_ACCESS_TOKEN}
+          default-label: main
+
+# Eureka Client Configuration:
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    fetchRegistry: true
+    registerWithEureka: true
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+# Port Configuration:
+server:
+  port: 8888

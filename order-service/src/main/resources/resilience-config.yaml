@@ -1,5 +1,3 @@
-resilience4j.retry:
-    configs:
-      default:
-        maxRetryAttempts: 3
-        waitDuration: 5000
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
