@@ -13,6 +13,75 @@ services:
       - microservices-net
     restart: unless-stopped
 
+  zipkin:
+    container_name: my_ecom_zipkin
+    image: openzipkin/zipkin:latest
+    ports:
+      - "9411:9411"
+    environment:
+      - STORAGE_TYPE=mem
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+#    ELK Stack Configurations:
+  elasticsearch:
+    container_name: my_ecom_elasticsearch
+    image: elasticsearch:9.2.4
+    ports:
+      - "9200:9200"
+    environment:
+#      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      discovery.type: single-node
+      xpack.license.self_generated.type: basic
+      xpack.security.enabled: "true"
+      ELASTIC_PASSWORD: pass
+      xpack.security.authc.api_key.enabled: "true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - microservices-net
+
+  kibana:
+    container_name: my_ecom_kibana
+    image: kibana:9.2.4
+    ports:
+      - '5601:5601'
+    environment:
+      SERVERNAME: kibana
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      ELASTICSEARCH_SERVICEACCOUNTTOKEN: ${KIBANA_SERVICE_TOKEN}
+#      ELASTICSEARCH_USERNAME: elastic
+#      ELASTICSEARCH_PASSWORD: pass
+    networks:
+      - microservices-net
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    container_name: my_ecom_logstash
+    image: logstash:9.2.4
+    ports:
+      - '5000:5000'
+      - '8091:8091'
+    environment:
+      XPACK_MONITORING_ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      XPACK_MONITORING_ENABLED: "true"
+      XPACK_MONITORING_ELASTICSEARCH_USERNAME: elastic
+      XPACK_MONITORING_ELASTICSEARCH_PASSWORD: pass
+      XPACK_MONITORING_ALLOW_LEGACY_COLLECTION: "true"
+    volumes:
+      - type: bind
+        source: ./logstash_pipeline/
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    networks:
+      - microservices-net
+    depends_on:
+      - elasticsearch
+
 networks:
   microservices-net:
     driver: bridge
